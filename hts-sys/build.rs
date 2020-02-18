@@ -75,6 +75,7 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
+   println!("autoheader");
    if Command::new("autoconf")
         .current_dir(out.join("htslib"))
         .status()
@@ -84,10 +85,12 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    if Command::new("sh")
+    println!("autoconf");
+    if Command::new("sudo")
         .current_dir(out.join("htslib"))
+        .arg("sh")
         .arg("./configure")
-        .arg(format!("CC={}", cc_path.display()))
+        .arg(format!("CC=clang"))
         .status()
         .unwrap()
         .success()
@@ -95,12 +98,13 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    if Command::new("sudo make")
+    println!("sudo ./configure");
+    if Command::new("sudo")
         .current_dir(out.join("htslib"))
-        .arg(format!("CC={}", cc_path.display()))
-        .arg(format!("CFLAGS={}", cc_cflags))
-        .arg("lib-static")
-        .arg("-B")
+        .arg("make")
+//        .arg(format!("CC={}", cc_path.display()))
+//        .arg(format!("CFLAGS={}", cc_cflags))
+//        .arg("--host")
         .status()
         .unwrap()
         .success()
@@ -108,8 +112,11 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    if Command::new("make clean")
+    println!("sudo make");
+    if Command::new("sudo")
         .current_dir(out.join("htslib"))
+        .arg("make")
+        .arg("install")
         .status()
         .unwrap()
         .success()
@@ -117,28 +124,7 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    if Command::new("reautoconf")
-        .current_dir(out.join("htslib"))
-        .status()
-        .unwrap()
-        .success()
-        != true
-    {
-        panic!("failed to build htslib");
-    }
-    if Command::new("sudo make install")
-        .current_dir(out.join("htslib"))
-        .arg(format!("CC={}", cc_path.display()))
-        .arg(format!("CFLAGS={}", cc_cflags))
-        .arg("lib-static")
-        .arg("-B")
-        .status()
-        .unwrap()
-        .success()
-        != true
-    {
-        panic!("failed to build htslib");
-    }
+    println!("sudo make install");
     cfg.file("wrapper.c").compile("wrapper");
 
     bindgen::Builder::default()
