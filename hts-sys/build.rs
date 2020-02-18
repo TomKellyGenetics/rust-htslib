@@ -66,7 +66,36 @@ fn main() {
     let tool = cfg.get_compiler();
     let (cc_path, cflags_env) = (tool.path(), tool.cflags_env());
     let cc_cflags = cflags_env.to_string_lossy().replace("-O0", "");
-    if Command::new("make")
+    if Command::new("autoheader")
+        .current_dir(out.join("htslib"))
+        .status()
+        .unwrap()
+        .success()
+        != true
+    {
+        panic!("failed to build htslib");
+    }
+   if Command::new("autoconf")
+        .current_dir(out.join("htslib"))
+        .status()
+        .unwrap()
+        .success()
+        != true
+    {
+        panic!("failed to build htslib");
+    }
+    if Command::new("sh")
+        .current_dir(out.join("htslib"))
+        .arg("./configure")
+        .arg(format!("CC={}", cc_path.display()))
+        .status()
+        .unwrap()
+        .success()
+        != true
+    {
+        panic!("failed to build htslib");
+    }
+    if Command::new("sudo make")
         .current_dir(out.join("htslib"))
         .arg(format!("CC={}", cc_path.display()))
         .arg(format!("CFLAGS={}", cc_cflags))
@@ -79,7 +108,37 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-
+    if Command::new("make clean")
+        .current_dir(out.join("htslib"))
+        .status()
+        .unwrap()
+        .success()
+        != true
+    {
+        panic!("failed to build htslib");
+    }
+    if Command::new("reautoconf")
+        .current_dir(out.join("htslib"))
+        .status()
+        .unwrap()
+        .success()
+        != true
+    {
+        panic!("failed to build htslib");
+    }
+    if Command::new("sudo make install")
+        .current_dir(out.join("htslib"))
+        .arg(format!("CC={}", cc_path.display()))
+        .arg(format!("CFLAGS={}", cc_cflags))
+        .arg("lib-static")
+        .arg("-B")
+        .status()
+        .unwrap()
+        .success()
+        != true
+    {
+        panic!("failed to build htslib");
+    }
     cfg.file("wrapper.c").compile("wrapper");
 
     bindgen::Builder::default()
