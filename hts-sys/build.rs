@@ -66,7 +66,9 @@ fn main() {
     }
 
     let tool = cfg.get_compiler();
+    #[allow(unused_variables)]
     let (cc_path, cflags_env) = (tool.path(), tool.cflags_env());
+    #[allow(unused_variables)]
     let cc_cflags = cflags_env.to_string_lossy().replace("-O0", "");
     if Command::new("autoheader")
         .current_dir(out.join("htslib"))
@@ -77,7 +79,7 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-   println!("autoheader");
+//   println!("autoheader");
    if Command::new("autoconf")
         .current_dir(out.join("htslib"))
         .status()
@@ -87,7 +89,7 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    println!("autoconf");
+//    println!("autoconf");
     if Command::new("sh")
         .current_dir(out.join("htslib"))
         .arg("./configure")
@@ -99,14 +101,12 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    println!("sh ./configure");
-    println!("{}", format!("--prefix={}/local/bin", "/Users/tom/"));
+//    println!("sh ./configure");
+//    println!("{}", format!("--prefix={}/local", home_dir().unwrap().into_os_string().into_string().unwrap()));
     if Command::new("sh")
         .current_dir(out.join("htslib"))
         .arg("./configure")
-        .arg(format!("--prefix={}/local/bin", "/Users/tom"))
-//        .arg("--prefix={}/local/bin")
-//        .arg(home_dir())
+        .arg(format!("--prefix={}/local", home_dir().unwrap().into_os_string().into_string().unwrap()))
         .status()
         .unwrap()
         .success()
@@ -114,7 +114,7 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    println!("make");
+//    println!("make");
     if Command::new("make")
         .current_dir(out.join("htslib"))
         .arg("install")
@@ -125,7 +125,7 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    println!("make install");
+//    println!("make install");
     cfg.file("wrapper.c").compile("wrapper");
 
     bindgen::Builder::default()
