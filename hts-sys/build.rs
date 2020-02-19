@@ -8,6 +8,8 @@ use cc;
 use fs_utils::copy::copy_directory;
 use glob::glob;
 
+use ::dirs::home_dir;
+
 use std::env;
 use std::fs;
 use std::path::PathBuf;
@@ -86,9 +88,8 @@ fn main() {
         panic!("failed to build htslib");
     }
     println!("autoconf");
-    if Command::new("sudo")
+    if Command::new("sh")
         .current_dir(out.join("htslib"))
-        .arg("sh")
         .arg("./configure")
         .arg(format!("CC=clang"))
         .status()
@@ -98,13 +99,14 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    println!("sudo ./configure");
-    if Command::new("sudo")
+    println!("sh ./configure");
+    println!("{}", format!("--prefix={}/local/bin", "/Users/tom/"));
+    if Command::new("sh")
         .current_dir(out.join("htslib"))
-        .arg("make")
-//        .arg(format!("CC={}", cc_path.display()))
-//        .arg(format!("CFLAGS={}", cc_cflags))
-//        .arg("--host")
+        .arg("./configure")
+        .arg(format!("--prefix={}/local/bin", "/Users/tom"))
+//        .arg("--prefix={}/local/bin")
+//        .arg(home_dir())
         .status()
         .unwrap()
         .success()
@@ -112,10 +114,9 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    println!("sudo make");
-    if Command::new("sudo")
+    println!("make");
+    if Command::new("make")
         .current_dir(out.join("htslib"))
-        .arg("make")
         .arg("install")
         .status()
         .unwrap()
@@ -124,7 +125,7 @@ fn main() {
     {
         panic!("failed to build htslib");
     }
-    println!("sudo make install");
+    println!("make install");
     cfg.file("wrapper.c").compile("wrapper");
 
     bindgen::Builder::default()
