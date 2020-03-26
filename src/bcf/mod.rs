@@ -51,7 +51,7 @@ pub trait Read: Sized {
     fn header(&self) -> &HeaderView;
 
     /// Return empty record.  Can be reused multiple times.
-    fn empty_record(&self) -> Record where Self: Sized;
+    fn empty_record(&self) -> Record;
 
     /// Activate multi-threaded BCF/VCF read support in htslib. This should permit faster
     /// reading of large VCF files.
