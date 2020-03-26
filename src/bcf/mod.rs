@@ -33,7 +33,7 @@ pub use crate::bcf::header::{Header, HeaderRecord};
 pub use crate::bcf::record::Record;
 
 /// A trait for a BCF reader with a read method.
-pub trait Read: Sized {
+pub trait Read {
     /// Read the next record.
     ///
     /// # Arguments

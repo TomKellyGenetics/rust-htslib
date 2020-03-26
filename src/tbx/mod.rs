@@ -68,7 +68,7 @@ fn path_as_bytes<'a, P: 'a + AsRef<Path>>(path: P, must_exist: bool) -> Result<V
 }
 
 /// A trait for a Tabix reader with a read method.
-pub trait Read: Sized {
+pub trait Read {
     /// Read next line into the given `Vec<u8>` (i.e., ASCII string).
     ///
     /// Use this method in combination with a single allocated record to avoid the reallocations
