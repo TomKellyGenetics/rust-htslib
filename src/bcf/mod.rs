@@ -45,7 +45,7 @@ pub trait Read: Sized {
     fn read(&mut self, record: &mut record::Record) -> Result<bool>;
 
     /// Return an iterator over all records of the VCF/BCF file.
-    fn records(&mut self) -> Records<'_, Self> where Self: Sized;
+    fn records(self, _: &mut Box<Self>) -> Records<'_, Self>;
 
     /// Return the header.
     fn header(&self) -> &HeaderView;
