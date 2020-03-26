@@ -87,7 +87,7 @@ pub trait Read: Sized {
     /// Note that, while being convenient, this is less efficient than pre-allocating a
     /// `Vec<u8>` and reading into it with the `read()` method, since every iteration involves
     /// the allocation of a new `Vec<u8>`.
-    fn records(&mut self) -> Records<'_, Self>;
+    fn records(&mut self) -> Records<'_, Self> where Self: Sized;
 
     /// Return the text headers, split by line.
     fn header(&self) -> &Vec<String>;

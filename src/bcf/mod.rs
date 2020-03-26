@@ -45,13 +45,13 @@ pub trait Read: Sized {
     fn read(&mut self, record: &mut record::Record) -> Result<bool>;
 
     /// Return an iterator over all records of the VCF/BCF file.
-    fn records(&mut self) -> Records<'_, Self>;
+    fn records(&mut self) -> Records<'_, Self> where Self: Sized;
 
     /// Return the header.
     fn header(&self) -> &HeaderView;
 
     /// Return empty record.  Can be reused multiple times.
-    fn empty_record(&self) -> Record;
+    fn empty_record(&self) -> Record where Self: Sized;
 
     /// Activate multi-threaded BCF/VCF read support in htslib. This should permit faster
     /// reading of large VCF files.
