@@ -42,10 +42,10 @@ pub trait Read {
     /// # Returns
     /// A result with an error in case of failure. Otherwise, true if a record was read,
     /// false if no record was read because the end of the file was reached.
-    fn read(&mut self, record: &mut record::Record) -> Result<bool>;
+    fn read(&mut self, record: &mut record::Record) -> Result<bool> where Self: Sized;
 
     /// Return an iterator over all records of the VCF/BCF file.
-    fn records(&mut self) -> Records<'_, Self>;
+    fn records(&mut self) -> Records<'_, Self> where Self: Sized;
 
     /// Return the header.
     fn header(&self) -> &HeaderView;
