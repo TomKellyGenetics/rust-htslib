@@ -228,7 +228,7 @@ impl IndexedReader {
     pub fn fetch(&mut self, rid: u32, start: u32, end: u32) -> Result<()> {
         let contig = self.header.rid2name(rid).unwrap();
         let contig = ffi::CString::new(contig).unwrap();
-        if unsafe { htslib::bcf_sr_seek(self.inner, contig.as_ptr(), start as i32) } != 0 {
+        if unsafe { htslib::bcf_sr_seek(self.inner, contig.as_ptr(), start as i64) } != 0 {
             Err(Error::Seek {
                 contig: contig.to_str().unwrap().to_owned(),
                 start,
@@ -443,7 +443,7 @@ pub mod synced {
                                 let record = *(*(*self.inner).readers.offset(idx as isize))
                                     .buffer
                                     .offset(0);
-                                if (*record).rid != (rid as i32) || (*record).pos >= (end as i32) {
+                                if (*record).rid != (rid as i32) || (*record).pos >= (end as i64) {
                                     return Ok(0);
                                 }
                             }
@@ -505,7 +505,7 @@ pub mod synced {
                 let contig = self.header(0).rid2name(rid).unwrap(); //.clone();
                 ffi::CString::new(contig).unwrap()
             };
-            if unsafe { htslib::bcf_sr_seek(self.inner, contig.as_ptr(), start as i32) } != 0 {
+            if unsafe { htslib::bcf_sr_seek(self.inner, contig.as_ptr(), start as i64) } != 0 {
                 Err(Error::Seek {
                     contig: contig.to_str().unwrap().to_owned(),
                     start,
@@ -953,7 +953,7 @@ mod tests {
             .ok()
             .expect("Error opening file.");
         let expected = ["./1", "1|1", "0/1", "0|1", "1|.", "1/1"];
-        for (rec, exp_gt) in vcf.records().zip(expected.into_iter()) {
+        for (rec, exp_gt) in vcf.records().zip(expected.iter()) {
             let mut rec = rec.expect("Error reading record.");
             let genotypes = rec.genotypes().expect("Error reading genotypes");
             assert_eq!(&format!("{}", genotypes.get(0)), exp_gt);
@@ -1327,7 +1327,7 @@ mod tests {
     fn test_multi_string_info_tag() {
         let mut reader = Reader::from_path("test/test-info-multi-string.vcf").unwrap();
         let mut rec = reader.empty_record();
-        reader.read(&mut rec);
+        let _ = reader.read(&mut rec);
 
         assert_eq!(rec.info(b"ANN").string().unwrap().unwrap().len(), 14);
     }
@@ -1336,7 +1336,7 @@ mod tests {
     fn test_multi_string_info_tag_number_a() {
         let mut reader = Reader::from_path("test/test-info-multi-string-number=A.vcf").unwrap();
         let mut rec = reader.empty_record();
-        reader.read(&mut rec);
+        let _ = reader.read(&mut rec);
 
         assert_eq!(rec.info(b"X").string().unwrap().unwrap().len(), 2);
     }
