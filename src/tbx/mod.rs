@@ -68,7 +68,7 @@ fn path_as_bytes<'a, P: 'a + AsRef<Path>>(path: P, must_exist: bool) -> Result<V
 }
 
 /// A trait for a Tabix reader with a read method.
-pub trait Read {
+pub trait Read: Sized {
     /// Read next line into the given `Vec<u8>` (i.e., ASCII string).
     ///
     /// Use this method in combination with a single allocated record to avoid the reallocations
@@ -80,14 +80,15 @@ pub trait Read {
     ///
     /// # Returns
     /// Ok(true) if record was read, Ok(false) if no more record in file
-    fn read(&mut self, record: &mut Vec<u8>) -> Result<bool>  where Self: Sized;
+    fn read(&mut self, record: &mut Vec<u8>) -> Result<bool>;
 
     /// Iterator over the lines/records of the seeked region.
     ///
     /// Note that, while being convenient, this is less efficient than pre-allocating a
     /// `Vec<u8>` and reading into it with the `read()` method, since every iteration involves
     /// the allocation of a new `Vec<u8>`.
-    fn records(&mut self) -> Records<'_, Self> where Self: Sized;
+
+    fn records(&mut self) -> Records<'_, Self>;
 
     /// Return the text headers, split by line.
     fn header(&self) -> &Vec<String>;

@@ -81,10 +81,10 @@ pub trait Read: Sized {
     /// Note that, while being convenient, this is less efficient than pre-allocating a
     /// `Record` and reading into it with the `read` method, since every iteration involves
     /// the allocation of a new `Record`.
-    fn records(&mut self) -> Records<'_, Self>  where Self: Sized;
+    fn records(&mut self) -> Records<'_, Self>;
 
     /// Iterator over pileups.
-    fn pileup(&mut self) -> pileup::Pileups<'_, Self>  where Self: Sized;
+    fn pileup(&mut self) -> pileup::Pileups<'_, Self>;
 
     /// Return the htsFile struct
     fn htsfile(&self) -> *mut htslib::htsFile;
